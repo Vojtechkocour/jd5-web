@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JD5 — Kdo je připraven, není překvapen</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --blue: #2D6BC6;
+            --blue-dark: #1e4a8a;
+            --blue-light: #4a8af0;
+            --green: #6BBF2A;
+            --green-dark: #4a8a1a;
+            --green-light: #8de04a;
+            --bg: #0c1117;
+            --bg-light: #121a24;
+            --surface: #16202e;
+            --surface-light: #1c2a3c;
+            --border: #243448;
+            --text: #e8edf4;
+            --text-dim: #8899aa;
+            --text-muted: #5a6a7a;
+            --warning: #e67e22;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ===== NAVBAR ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(12, 17, 23, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.7rem 2rem;
+            box-shadow: 0 2px 30px rgba(0,0,0,0.3);
+        }
+
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            cursor: pointer;
+        }
+
+        .nav-logo .jd { color: var(--blue); }
+        .nav-logo .five { color: var(--green); }
+
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--green);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .nav-hamburger span {
+            width: 24px;
+            height: 2px;
+            background: var(--text);
+            transition: all 0.3s;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 40%, rgba(45,107,198,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 60%, rgba(107,191,42,0.08) 0%, transparent 50%);
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(36,52,72,0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(36,52,72,0.3) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+        }
+
+        .hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            max-width: 850px;
+            padding: 0 2rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            background: rgba(107,191,42,0.1);
+            border: 1px solid rgba(107,191,42,0.3);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--green);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            color: white;
+            box-shadow: 0 4px 20px rgba(45,107,198,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(45,107,198,0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--green);
+            color: var(--green);
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        .scroll-mouse {
+            width: 24px;
+            height: 38px;
+            border: 2px solid var(--text-muted);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .scroll-mouse::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 2px;
+            animation: scroll-down 2s ease-in-out infinite;
+        }
+
+        @keyframes scroll-down {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(12px); opacity: 0; }
+        }
+
+        #particles-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ===== SECTIONS COMMON ===== */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-dim);
+            max-width: 650px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+        }
+
+        /* ===== DARK SECTION BG ===== */
+        .dark-section {
+            background: var(--bg-light);
+            padding: 6rem 2rem;
+        }
+
+        .dark-section .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ===== O NÁS ===== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-shield {
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .about-text h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-text p {
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+        }
+
+        .about-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .about-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .about-features li .check {
+            width: 22px;
+            height: 22px;
+            background: rgba(107,191,42,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .about-features li .check svg {
+            width: 12px;
+            height: 12px;
+            stroke: var(--green);
+        }
+
+        /* ===== ALERT BOX ===== */
+        .alert-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--warning);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .alert-box h3 {
+            color: var(--warning);
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-box p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .alert-box ul {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+            padding-left: 1.2rem;
+        }
+
+        .alert-box li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* ===== LEGISLATIVA CARDS ===== */
+        .law-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .law-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.3s;
+        }
+
+        .law-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+        }
+
+        .law-card .law-num {
+            font-size: 0.8rem;
+            color: var(--blue-light);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .law-card .law-name {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        /* ===== SLUŽBY ===== */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .service-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: default;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--blue), var(--green));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--blue);
+            box-shadow: 0 12px 40px rgba(45,107,198,0.15);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .service-icon.blue { background: rgba(45,107,198,0.15); }
+        .service-icon.blue svg { stroke: var(--blue-light); }
+        .service-icon.green { background: rgba(107,191,42,0.15); }
+        .service-icon.green svg { stroke: var(--green); }
+        .service-icon.orange { background: rgba(230,126,34,0.15); }
+        .service-icon.orange svg { stroke: var(--warning); }
+
+        .service-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-card p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ===== VYHODY GRID ===== */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .benefit-item:hover {
+            border-color: var(--green);
+            transform: translateY(-2px);
+        }
+
+        .benefit-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(107,191,42,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .benefit-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--green);
+        }
+
+        .benefit-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .benefit-item p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* ===== RIZIKA ===== */
+        .risks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .risk-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .risk-card:hover {
+            border-color: var(--warning);
+            transform: translateY(-3px);
+        }
+
+        .risk-card .risk-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .risk-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .risk-card p {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        /* ===== CO DODÁVÁME ===== */
+        .delivery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .delivery-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        .delivery-item:hover {
+            border-color: var(--blue);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(45,107,198,0.12);
+        }
+
+        .delivery-item .del-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delivery-item .del-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .delivery-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .delivery-item p {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        /* ===== SNV ===== */
+        .snv-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .snv-text h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .snv-text p {
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .snv-text .time-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: rgba(45,107,198,0.12);
+            border: 1px solid rgba(45,107,198,0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--blue-light);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .snv-list {
+            list-style: none;
+        }
+
+        .snv-list li {
+            padding: 0.5rem 0;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .snv-list li::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            flex-shrink: 0;
+        }
+
+        .snv-visual {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ===== PROCESS TIMELINE ===== */
+        .process-steps {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .process-steps::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 28px;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .process-step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.6s ease;
+        }
+
+        .process-step.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .step-num {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            transition: all 0.4s;
+        }
+
+        .process-step.visible .step-num {
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            border-color: transparent;
+        }
+
+        .step-content h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .step-content p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* ===== ŠKOLENÍ ===== */
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .training-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.4s;
+        }
+
+        .training-card:hover {
+            border-color: var(--green);
+            transform: translateY(-4px);
+        }
+
+        .training-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .training-card h4 .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .training-card p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .training-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(230,126,34,0.12);
+            border: 1px solid rgba(230,126,34,0.3);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--warning);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== TÝM ===== */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--blue);
+        }
+
+        .team-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+        }
+
+        .team-avatar svg { width: 100%; height: 100%; }
+
+        .team-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .team-card .role {
+            color: var(--green);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .team-card p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* ===== REFERENCE ===== */
+        .reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .reference-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        .reference-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--green);
+            box-shadow: 0 8px 30px rgba(107,191,42,0.1);
+        }
+
+        .reference-emblem {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.2rem;
+        }
+
+        .reference-emblem svg { width: 100%; height: 100%; }
+
+        .reference-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .reference-card .ref-type {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .reference-card .ref-quote {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        /* ===== KONTAKT ===== */
+        .contact-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .contact-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(45,107,198,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--blue-light);
+        }
+
+        .contact-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .contact-item p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .contact-item a {
+            color: var(--blue-light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-item a:hover { color: var(--green); }
+
+        .contact-form {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .contact-form h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(45,107,198,0.3);
+        }
+
+        /* ===== CTA ===== */
+        .cta-section {
+            background: linear-gradient(135deg, var(--surface), var(--surface-light));
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 30% 50%, rgba(45,107,198,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(107,191,42,0.08) 0%, transparent 60%);
+        }
+
+        .cta-section h2 {
+            font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: var(--text-dim);
+            position: relative;
+            margin-bottom: 2rem;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-section .btn { position: relative; }
+
+        /* ===== QUOTE ===== */
+        .big-quote {
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        .big-quote blockquote {
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            font-weight: 600;
+            font-style: italic;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .big-quote blockquote::before {
+            content: '\201E';
+            font-size: 4rem;
+            position: absolute;
+            top: -2rem;
+            left: -1.5rem;
+            color: var(--blue);
+            opacity: 0.3;
+            font-style: normal;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--bg);
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            font-size: 1.4rem;
+            font-weight: 900;
+        }
+
+        .footer-logo .jd { color: var(--blue); }
+        .footer-logo .five { color: var(--green); }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-up-delay-1 { transition-delay: 0.1s; }
+        .fade-up-delay-2 { transition-delay: 0.2s; }
+        .fade-up-delay-3 { transition-delay: 0.3s; }
+        .fade-up-delay-4 { transition-delay: 0.4s; }
+        .fade-up-delay-5 { transition-delay: 0.5s; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-hamburger { display: flex; }
+
+            .nav-links.open {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(12,17,23,0.98);
+                backdrop-filter: blur(20px);
+                padding: 1.5rem 2rem;
+                gap: 1rem;
+            }
+
+            .about-grid,
+            .snv-content,
+            .contact-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+
+            .hero-stats { gap: 1.5rem; }
+            .process-steps::before { left: 18px; }
+            .step-num { width: 40px; height: 40px; font-size: 0.9rem; }
+            .process-step { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+    <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <span class="jd">JD</span><span class="five">5</span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#o-nas">O nás</a></li>
+        <li><a href="#legislativa">Legislativa</a></li>
+        <li><a href="#sluzby">Služby</a></li>
+        <li><a href="#co-dodavame">Co dodáváme</a></li>
+        <li><a href="#skoleni">Školení</a></li>
+        <li><a href="#tym">Tým</a></li>
+        <li><a href="#reference">Reference</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <canvas id="particles-canvas"></canvas>
+    <div class="hero-content">
+        <div class="hero-badge">Krizové plány a školení pro obce</div>
+        <h1>Kdo je připraven,<br><span class="highlight">není překvapen</span></h1>
+        <p class="hero-subtitle">Příprava krizových plánů pro obce do 3 000 obyvatel. Diagnostika připravenosti, požární ochrana a odborná školení na míru.</p>
+        <div class="hero-buttons">
+            <a href="#sluzby" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                Naše služby
+            </a>
+            <a href="#kontakt" class="btn btn-outline">Kontaktujte nás</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-number" data-target="150">0</div>
+                <div class="stat-label">Zpracovaných plánů</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" data-target="80">0</div>
+                <div class="stat-label">Spokojených obcí</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" data-target="12">0</div>
+                <div class="stat-label">Let zkušeností</div>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <div class="scroll-mouse"></div>
+    </div>
+</section>
+
+<!-- O NÁS -->
+<section class="section" id="o-nas">
+    <div class="about-grid">
+        <div class="about-visual fade-up">
+            <svg class="about-shield" viewBox="0 0 300 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="shield-grad" x1="50" y1="0" x2="250" y2="340" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#2D6BC6"/>
+                        <stop offset="1" stop-color="#6BBF2A"/>
+                    </linearGradient>
+                    <linearGradient id="shield-inner" x1="100" y1="60" x2="200" y2="280" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#2D6BC6" stop-opacity="0.3"/>
+                        <stop offset="1" stop-color="#6BBF2A" stop-opacity="0.1"/>
+                    </linearGradient>
+                </defs>
+                <path d="M150 10 L280 60 L280 170 C280 250 200 310 150 330 C100 310 20 250 20 170 L20 60 Z" fill="url(#shield-inner)" stroke="url(#shield-grad)" stroke-width="3"/>
+                <path d="M150 40 L250 80 L250 160 C250 230 185 280 150 298 C115 280 50 230 50 160 L50 80 Z" fill="none" stroke="url(#shield-grad)" stroke-width="1" opacity="0.3"/>
+                <text x="150" y="165" text-anchor="middle" font-family="system-ui" font-weight="900" font-size="60">
+                    <tspan fill="#2D6BC6">JD</tspan><tspan fill="#6BBF2A">5</tspan>
+                </text>
+                <path d="M110 210 L140 240 L195 185" stroke="#6BBF2A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                    <animate attributeName="stroke-dasharray" from="0 150" to="150 0" dur="1.5s" fill="freeze" begin="0.5s"/>
+                </path>
+                <circle cx="150" cy="170" r="100" stroke="url(#shield-grad)" stroke-width="0.5" fill="none" opacity="0.2">
+                    <animate attributeName="r" values="95;105;95" dur="4s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+        <div class="about-text fade-up fade-up-delay-1">
+            <div class="section-tag">O nás</div>
+            <h3>Specialisté na krizovou připravenost obcí</h3>
+            <p>Jsme tým odborníků, kteří se specializují na přípravu krizových plánů pro obce do 3 000 obyvatel. Pomáháme starostům a zastupitelstvům splnit zákonné povinnosti a zároveň být skutečně připraveni na mimořádné události.</p>
+            <p>Každý krizový plán od JD5 je originál šitý na míru — zohledňujeme specifická rizika, místní podmínky a dostupné zdroje vaší obce.</p>
+            <ul class="about-features">
+                <li>
+                    <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    Krizové plány dle aktuální legislativy
+                </li>
+                <li>
+                    <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    Individuální přístup ke každé obci
+                </li>
+                <li>
+                    <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    Praktická školení a simulace
+                </li>
+                <li>
+                    <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    Roční aktualizace plánů
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- LEGISLATIVA -->
+<div class="dark-section" id="legislativa">
+    <div class="section-inner">
+        <div class="section-header">
+            <div class="section-tag fade-up">Legislativa</div>
+            <h2 class="section-title fade-up">Krizový plán — luxus nebo povinnost?</h2>
+            <p class="section-subtitle fade-up">Krizový plán není zbytečný papír, ale zákonná povinnost. Starosta odpovídá za krizové řízení obce.</p>
+        </div>
+
+        <div class="law-grid fade-up">
+            <div class="law-card">
+                <div class="law-num">Zákon č. 240/2000 Sb.</div>
+                <div class="law-name">Krizový zákon (§ 15–16) — povinnosti obce a starosty v krizovém řízení</div>
+            </div>
+            <div class="law-card">
+                <div class="law-num">Zákon č. 239/2000 Sb.</div>
+                <div class="law-name">Integrovaný záchranný systém — spolupráce složek při mimořádných událostech</div>
+            </div>
+            <div class="law-card">
+                <div class="law-num">Zákon č. 254/2001 Sb.</div>
+                <div class="law-name">Vodní zákon — povodňové plány a protipovodňová ochrana</div>
+            </div>
+            <div class="law-card">
+                <div class="law-num">Zákon č. 133/1985 Sb.</div>
+                <div class="law-name">Požární ochrana — povinnosti obcí v oblasti požární prevence a zásahů</div>
+            </div>
+        </div>
+
+        <div class="alert-box fade-up">
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Odpovědnost starosty
+            </h3>
+            <p>Při absenci nebo zastaralosti krizového plánu dochází k porušení zákona. V případě škod na zdraví nebo majetku může být zkoumán systém řízení a hrozí osobní odpovědnost starosty.</p>
+        </div>
+    </div>
+</div>
+
+<!-- PROČ NESTAČÍ POVODŇOVÝ PLÁN -->
+<section class="section">
+    <div class="section-header">
+        <div class="section-tag fade-up">Spektrum rizik</div>
+        <h2 class="section-title fade-up">Proč nestačí povodňový plán?</h2>
+        <p class="section-subtitle fade-up">Obce čelí mnohem širšímu spektru hrozeb než jen povodním</p>
+    </div>
+    <div class="risks-grid">
+        <div class="risk-card fade-up fade-up-delay-1">
+            <div class="risk-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--blue-light)" stroke-width="1.5" stroke-linecap="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+            </div>
+            <h4>Extrémní počasí</h4>
+            <p>Vichřice, přívalové srážky, krupobití</p>
+        </div>
+        <div class="risk-card fade-up fade-up-delay-2">
+            <div class="risk-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="1.5" stroke-linecap="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
+            </div>
+            <h4>Požáry</h4>
+            <p>Požáry budov a průmyslových objektů</p>
+        </div>
+        <div class="risk-card fade-up fade-up-delay-3">
+            <div class="risk-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <h4>Dopravní nehody</h4>
+            <p>Nehody s nebezpečnými látkami</p>
+        </div>
+        <div class="risk-card fade-up fade-up-delay-4">
+            <div class="risk-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--blue-light)" stroke-width="1.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <h4>Kolaps infrastruktury</h4>
+            <p>Výpadky energií, vody, komunikací</p>
+        </div>
+        <div class="risk-card fade-up fade-up-delay-5">
+            <div class="risk-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <h4>Kybernetické incidenty</h4>
+            <p>Útoky na systémy obce</p>
+        </div>
+        <div class="risk-card fade-up fade-up-delay-5">
+            <div class="risk-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <h4>Evakuace</h4>
+            <p>Evakuace škol a hromadných akcí</p>
+        </div>
+    </div>
+</section>
+
+<!-- SLUŽBY (VÝHODY) -->
+<div class="dark-section" id="sluzby">
+    <div class="section-inner">
+        <div class="section-header">
+            <div class="section-tag fade-up">Co získáte</div>
+            <h2 class="section-title fade-up">Výhody krizového plánu</h2>
+            <p class="section-subtitle fade-up">Proč se investice do krizového plánu vyplatí</p>
+        </div>
+        <div class="benefits-grid">
+            <div class="benefit-item fade-up fade-up-delay-1">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                    <h4>Právní jistota</h4>
+                    <p>Splnění zákonných povinností a klid při kontrolách HZS</p>
+                </div>
+            </div>
+            <div class="benefit-item fade-up fade-up-delay-2">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <div>
+                    <h4>Minimální zátěž starosty</h4>
+                    <p>Vše připravíme za vás — vy jen schvalujete</p>
+                </div>
+            </div>
+            <div class="benefit-item fade-up fade-up-delay-3">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+                </div>
+                <div>
+                    <h4>Jednotné postupy</h4>
+                    <p>Jasně definované postupy pro všechny krizové situace</p>
+                </div>
+            </div>
+            <div class="benefit-item fade-up fade-up-delay-4">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                </div>
+                <div>
+                    <h4>Podklady pro krizový štáb</h4>
+                    <p>Kompletní materiály pro efektivní fungování štábu</p>
+                </div>
+            </div>
+            <div class="benefit-item fade-up fade-up-delay-5">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
+                </div>
+                <div>
+                    <h4>Audit stavu JSDH</h4>
+                    <p>Přehled o připravenosti jednotky sboru dobrovolných hasičů</p>
+                </div>
+            </div>
+            <div class="benefit-item fade-up fade-up-delay-5">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+                </div>
+                <div>
+                    <h4>Podklady pro dotace</h4>
+                    <p>Kvalitní dokumentace jako základ pro dotační řízení</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CO DODÁVÁME -->
+<section class="section" id="co-dodavame">
+    <div class="section-header">
+        <div class="section-tag fade-up">Obsah dodávky</div>
+        <h2 class="section-title fade-up">Co od nás dostanete</h2>
+        <p class="section-subtitle fade-up">Každý krizový plán od JD5 je originál šitý na míru vaší obci</p>
+    </div>
+    <div class="delivery-grid">
+        <div class="delivery-item fade-up fade-up-delay-1">
+            <div class="del-icon" style="background: rgba(45,107,198,0.12);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                </svg>
+            </div>
+            <h4>Tištěná verze plánu</h4>
+            <p>Kompletní krizový plán v tištěné podobě</p>
+        </div>
+        <div class="delivery-item fade-up fade-up-delay-2">
+            <div class="del-icon" style="background: rgba(107,191,42,0.12);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <path d="M8 21h8M12 17v4"/>
+                </svg>
+            </div>
+            <h4>Elektronická verze</h4>
+            <p>Digitální kopie pro snadnou aktualizaci</p>
+        </div>
+        <div class="delivery-item fade-up fade-up-delay-3">
+            <div class="del-icon" style="background: rgba(230,126,34,0.12);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                </svg>
+            </div>
+            <h4>Návrh SNV</h4>
+            <p>Sklad nouzového vybavení na míru</p>
+        </div>
+        <div class="delivery-item fade-up fade-up-delay-4">
+            <div class="del-icon" style="background: rgba(45,107,198,0.12);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>
+                </svg>
+            </div>
+            <h4>Reflexní vesty</h4>
+            <p>Označené vesty pro členy krizového štábu</p>
+        </div>
+        <div class="delivery-item fade-up fade-up-delay-5">
+            <div class="del-icon" style="background: rgba(107,191,42,0.12);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+            </div>
+            <h4>Školení se simulací</h4>
+            <p>Praktické školení formou simulované mimořádné události</p>
+        </div>
+    </div>
+</section>
+
+<!-- SNV -->
+<div class="dark-section" id="snv">
+    <div class="section-inner">
+        <div class="snv-content">
+            <div class="snv-text fade-up">
+                <div class="section-tag">Nouzové vybavení</div>
+                <h3>Sklad nouzového vybavení (SNV)</h3>
+                <div class="time-badge">Prvních 24–72 hodin</div>
+                <p>Mít SNV znamená být připraven zajistit podporu v prvních kritických hodinách po mimořádné události — než dorazí externí pomoc.</p>
+                <ul class="snv-list">
+                    <li>Podpora krizového řízení obce</li>
+                    <li>Zajištění činnosti JSDH</li>
+                    <li>Pomoc evakuovaným osobám</li>
+                    <li>Základní materiální zabezpečení</li>
+                    <li>Komunikační prostředky</li>
+                </ul>
+            </div>
+            <div class="snv-visual fade-up fade-up-delay-1">
+                <svg viewBox="0 0 300 280" width="300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="box-grad" x1="0" y1="0" x2="300" y2="280" gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#2D6BC6" stop-opacity="0.2"/>
+                            <stop offset="1" stop-color="#6BBF2A" stop-opacity="0.1"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Box -->
+                    <rect x="50" y="80" width="200" height="150" rx="12" fill="url(#box-grad)" stroke="#2D6BC6" stroke-width="2"/>
+                    <!-- Lid -->
+                    <path d="M40 80 L150 40 L260 80" stroke="#6BBF2A" stroke-width="2" fill="none"/>
+                    <path d="M40 80 L150 40 L260 80 L150 65 Z" fill="rgba(107,191,42,0.1)"/>
+                    <!-- Cross -->
+                    <rect x="130" y="120" width="40" height="12" rx="3" fill="#2D6BC6" opacity="0.6"/>
+                    <rect x="144" y="106" width="12" height="40" rx="3" fill="#2D6BC6" opacity="0.6"/>
+                    <!-- 24-72h badge -->
+                    <rect x="85" y="175" width="130" height="32" rx="16" fill="rgba(45,107,198,0.15)" stroke="rgba(45,107,198,0.3)" stroke-width="1"/>
+                    <text x="150" y="196" text-anchor="middle" font-family="system-ui" font-weight="700" font-size="14" fill="#4a8af0">24–72 hodin</text>
+                    <!-- Pulse -->
+                    <circle cx="150" cy="130" r="50" stroke="#2D6BC6" stroke-width="0.5" fill="none" opacity="0.3">
+                        <animate attributeName="r" values="45;60;45" dur="3s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" values="0.3;0.1;0.3" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QUOTE -->
+<div class="big-quote fade-up">
+    <blockquote>Krizový plán není zbytečný papír, ale zákonná povinnost — a vaše pojistka pro případ, kdy na improvizaci není čas.</blockquote>
+</div>
+
+<!-- JAK PRACUJEME -->
+<div class="dark-section" id="proces">
+    <div class="section-inner">
+        <div class="section-header">
+            <div class="section-tag fade-up">Náš přístup</div>
+            <h2 class="section-title fade-up">Jak pracujeme</h2>
+            <p class="section-subtitle fade-up">Od prvního kontaktu po kompletní zabezpečení vaší obce</p>
+        </div>
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <h3>Úvodní konzultace</h3>
+                    <p>Bezplatně zhodnotíme aktuální stav krizové připravenosti vaší obce. Identifikujeme klíčové oblasti ke zlepšení.</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <h3>Diagnostika DPO</h3>
+                    <p>Provedeme komplexní audit pomocí našeho nástroje DPO — 25 otázek pokrývajících všechny oblasti krizového řízení. Získáte přesné skóre a přehled slabých míst.</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <h3>Zpracování plánu na míru</h3>
+                    <p>Na základě diagnostiky připravíme kompletní krizový plán obsahující pouze relevantní rizika pro vaši obec.</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <h3>Školení se simulací</h3>
+                    <p>Proškolíme starostu a krizový štáb formou simulované mimořádné události. Praktické, ne jen teoretické.</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-num">5</div>
+                <div class="step-content">
+                    <h3>Roční aktualizace</h3>
+                    <p>Zajistíme, že plán zůstane aktuální — pravidelná aktualizace s korektními informacemi. Možnost financování přes spolky obcí.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ŠKOLENÍ 2026 -->
+<section class="section" id="skoleni">
+    <div class="section-header">
+        <div class="section-tag fade-up">Vzdělávání</div>
+        <h2 class="section-title fade-up">Školení pro starosty</h2>
+        <p class="section-subtitle fade-up">
+            <span class="training-badge">Novelka 2026</span><br>
+            Praktická školení zaměřená na reálné situace a povinnosti starostů
+        </p>
+    </div>
+    <div class="training-grid">
+        <div class="training-card fade-up fade-up-delay-1">
+            <h4><span class="dot"></span>Role a povinnosti starosty</h4>
+            <p>Co přesně zákon vyžaduje od starosty v krizové situaci. Jaké jsou jeho pravomoci a odpovědnosti.</p>
+        </div>
+        <div class="training-card fade-up fade-up-delay-2">
+            <h4><span class="dot"></span>Školení krizového štábu</h4>
+            <p>Praktický nácvik s kompletní simulací mimořádné události. Reálné scénáře, reálná rozhodnutí.</p>
+        </div>
+        <div class="training-card fade-up fade-up-delay-3">
+            <h4><span class="dot"></span>Rozdíly SDH vs. JSDH</h4>
+            <p>Vyjasnění kompetencí a právního postavení spolkového sboru a jednotky sboru dobrovolných hasičů.</p>
+        </div>
+        <div class="training-card fade-up fade-up-delay-4">
+            <h4><span class="dot"></span>Spolupráce starosty a velitele</h4>
+            <p>Jak efektivně nastavit spolupráci mezi starostou obce a velitelem JSDH pro hladký průběh zásahů.</p>
+        </div>
+        <div class="training-card fade-up fade-up-delay-5">
+            <h4><span class="dot"></span>Orientace pro nové starosty</h4>
+            <p>Speciální modul pro čerstvě zvolené starosty — rychlý přehled povinností a první kroky v krizovém řízení.</p>
+        </div>
+    </div>
+</section>
+
+<!-- TÝM -->
+<div class="dark-section" id="tym">
+    <div class="section-inner">
+        <div class="section-header">
+            <div class="section-tag fade-up">Náš tým</div>
+            <h2 class="section-title fade-up">Lidé za JD5</h2>
+            <p class="section-subtitle fade-up">Zkušení odborníci na krizovou připravenost obcí</p>
+        </div>
+        <div class="team-grid">
+            <div class="team-card fade-up fade-up-delay-1">
+                <div class="team-avatar">
+                    <svg viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="50" fill="#1c2a3c"/>
+                        <circle cx="50" cy="38" r="16" fill="#2D6BC6" opacity="0.5"/>
+                        <ellipse cx="50" cy="80" rx="28" ry="20" fill="#2D6BC6" opacity="0.3"/>
+                        <text x="50" y="55" text-anchor="middle" font-family="system-ui" font-weight="700" font-size="28" fill="#4a8af0">JN</text>
+                    </svg>
+                </div>
+                <h3>Jan Novák</h3>
+                <div class="role">Ředitel & hlavní konzultant</div>
+                <p>Specialista na krizové řízení s více než 15 lety praxe v oblasti ochrany obyvatelstva a krizového plánování obcí.</p>
+            </div>
+            <div class="team-card fade-up fade-up-delay-2">
+                <div class="team-avatar">
+                    <svg viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="50" fill="#1c2a3c"/>
+                        <circle cx="50" cy="38" r="16" fill="#6BBF2A" opacity="0.5"/>
+                        <ellipse cx="50" cy="80" rx="28" ry="20" fill="#6BBF2A" opacity="0.3"/>
+                        <text x="50" y="55" text-anchor="middle" font-family="system-ui" font-weight="700" font-size="28" fill="#8de04a">PD</text>
+                    </svg>
+                </div>
+                <h3>Petra Dvořáková</h3>
+                <div class="role">Specialistka požární ochrany</div>
+                <p>Certifikovaná odbornice na požární prevenci. Vedoucí školení JSDH a autorka metodiky požární bezpečnosti obcí.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REFERENCE -->
+<section class="section" id="reference">
+    <div class="section-header">
+        <div class="section-tag fade-up">Reference</div>
+        <h2 class="section-title fade-up">Důvěřují nám</h2>
+        <p class="section-subtitle fade-up">Vybrané obce, kterým jsme pomohli s krizovou připraveností</p>
+    </div>
+    <div class="reference-grid">
+        <div class="reference-card fade-up fade-up-delay-1">
+            <div class="reference-emblem">
+                <svg viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="36" fill="#1c2a3c" stroke="#2D6BC6" stroke-width="2"/>
+                    <path d="M40 15 L42 30 H50 L43 38 L46 52 L40 44 L34 52 L37 38 L30 30 H38 Z" fill="#2D6BC6" opacity="0.6"/>
+                    <text x="40" y="70" text-anchor="middle" font-family="system-ui" font-size="8" fill="#8899aa">EST. 1990</text>
+                </svg>
+            </div>
+            <h3>Obec Hrušovany</h3>
+            <div class="ref-type">Krizový plán + DPO audit</div>
+            <p class="ref-quote">"Díky JD5 jsme konečně věděli, kde máme slabá místa. Během půl roku jsme dosáhli vynikající připravenosti."</p>
+        </div>
+        <div class="reference-card fade-up fade-up-delay-2">
+            <div class="reference-emblem">
+                <svg viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="36" fill="#1c2a3c" stroke="#6BBF2A" stroke-width="2"/>
+                    <path d="M25 50 L40 20 L55 50 Z" fill="none" stroke="#6BBF2A" stroke-width="2" opacity="0.6"/>
+                    <circle cx="40" cy="40" r="8" fill="#6BBF2A" opacity="0.3"/>
+                    <text x="40" y="70" text-anchor="middle" font-family="system-ui" font-size="8" fill="#8899aa">EST. 1975</text>
+                </svg>
+            </div>
+            <h3>Městys Lipnice</h3>
+            <div class="ref-type">Školení JSDH + požární ochrana</div>
+            <p class="ref-quote">"Profesionální přístup a skvělá školení. Naši hasiči jsou teď mnohem lépe připraveni na zásahy."</p>
+        </div>
+        <div class="reference-card fade-up fade-up-delay-3">
+            <div class="reference-emblem">
+                <svg viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="36" fill="#1c2a3c" stroke="#4a8af0" stroke-width="2"/>
+                    <rect x="28" y="25" width="24" height="30" rx="2" fill="none" stroke="#4a8af0" stroke-width="2" opacity="0.6"/>
+                    <path d="M34 35h12M34 40h12M34 45h8" stroke="#4a8af0" stroke-width="1.5" opacity="0.4"/>
+                    <text x="40" y="70" text-anchor="middle" font-family="system-ui" font-size="8" fill="#8899aa">EST. 2002</text>
+                </svg>
+            </div>
+            <h3>Obec Dolní Újezd</h3>
+            <div class="ref-type">Kompletní krizová dokumentace</div>
+            <p class="ref-quote">"Kompletní služba od A do Z. Krizový plán, proškolení zastupitelstva i členů SDH. Jednoznačně doporučujeme."</p>
+        </div>
+        <div class="reference-card fade-up fade-up-delay-4">
+            <div class="reference-emblem">
+                <svg viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="36" fill="#1c2a3c" stroke="#fdcb6e" stroke-width="2"/>
+                    <path d="M30 45 C30 30 50 30 50 45" stroke="#fdcb6e" stroke-width="2" fill="none" opacity="0.6"/>
+                    <rect x="32" y="45" width="16" height="8" rx="1" fill="#fdcb6e" opacity="0.3"/>
+                    <text x="40" y="70" text-anchor="middle" font-family="system-ui" font-size="8" fill="#8899aa">EST. 1968</text>
+                </svg>
+            </div>
+            <h3>Město Bystřice</h3>
+            <div class="ref-type">Diagnostika DPO + poradenství</div>
+            <p class="ref-quote">"Audit DPO nám ukázal cestu. Z 52 bodů jsme se za rok dostali na 89. Výborná spolupráce."</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+    <h2 class="fade-up">Připravte svou obec ještě dnes</h2>
+    <p class="fade-up">Neváhejte nás kontaktovat — první konzultace je zdarma. Společně zajistíme, že vaše obec bude připravena na cokoliv.</p>
+    <a href="#kontakt" class="btn btn-primary fade-up">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        Kontaktujte nás
+    </a>
+</div>
+
+<!-- KONTAKT -->
+<section class="section" id="kontakt">
+    <div class="section-header">
+        <div class="section-tag fade-up">Kontakt</div>
+        <h2 class="section-title fade-up">Ozvěte se nám</h2>
+        <p class="section-subtitle fade-up">Rádi vám poradíme a připravíme nezávaznou nabídku</p>
+    </div>
+    <div class="contact-wrapper">
+        <div class="contact-info fade-up">
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>Telefon</h4>
+                    <p><a href="tel:+420607180634">607 180 634</a></p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <path d="M22 6l-10 7L2 6"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>E-mail</h4>
+                    <p><a href="mailto:info@davar.cz">info@davar.cz</a></p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>Pracovní doba</h4>
+                    <p>Po — Pá: 8:00 — 17:00</p>
+                </div>
+            </div>
+        </div>
+        <div class="contact-form fade-up fade-up-delay-1">
+            <h3>Napište nám</h3>
+            <form onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label>Jméno a příjmení</label>
+                    <input type="text" placeholder="Jan Novák" required>
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" placeholder="starosta@obec.cz" required>
+                </div>
+                <div class="form-group">
+                    <label>Název obce</label>
+                    <input type="text" placeholder="Obec Hrušovany">
+                </div>
+                <div class="form-group">
+                    <label>Zpráva</label>
+                    <textarea placeholder="Popište, s čím vám můžeme pomoci..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Odeslat zprávu</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-logo">
+            <span class="jd">JD</span><span class="five">5</span>
+        </div>
+        <div class="footer-copy">&copy; 2026 JD5 — Kdo je připraven, není překvapen.</div>
+    </div>
+</footer>
+
+<script>
+// ===== NAVBAR =====
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ===== HAMBURGER =====
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => navLinks.classList.remove('open'));
+});
+
+// ===== SCROLL ANIMATIONS =====
+const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.fade-up, .process-step').forEach(el => fadeObserver.observe(el));
+
+// ===== COUNTERS =====
+let countersStarted = false;
+const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+        if (e.isIntersecting && !countersStarted) {
+            countersStarted = true;
+            document.querySelectorAll('.stat-number').forEach(counter => {
+                const target = parseInt(counter.dataset.target);
+                const duration = 2000;
+                const start = performance.now();
+                function update(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    counter.textContent = Math.round(target * eased) + '+';
+                    if (progress < 1) requestAnimationFrame(update);
+                }
+                requestAnimationFrame(update);
+            });
+        }
+    });
+}, { threshold: 0.5 });
+document.querySelectorAll('.hero-stats').forEach(el => counterObserver.observe(el));
+
+// ===== PARTICLES =====
+(function() {
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: null, y: null };
+    let w, h;
+
+    function resize() {
+        const hero = document.querySelector('.hero');
+        w = canvas.width = hero.offsetWidth;
+        h = canvas.height = hero.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    canvas.parentElement.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+    });
+    canvas.parentElement.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * w;
+            this.y = Math.random() * h;
+            this.size = Math.random() * 2 + 0.5;
+            this.speedX = (Math.random() - 0.5) * 0.5;
+            this.speedY = (Math.random() - 0.5) * 0.5;
+            this.color = Math.random() > 0.5 ? 'rgba(45,107,198,' : 'rgba(107,191,42,';
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x < 0 || this.x > w) this.speedX *= -1;
+            if (this.y < 0 || this.y > h) this.speedY *= -1;
+            if (mouse.x !== null) {
+                const dx = mouse.x - this.x, dy = mouse.y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 150) { this.x -= dx * 0.02; this.y -= dy * 0.02; }
+            }
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = this.color + '0.5)';
+            ctx.fill();
+        }
+    }
+
+    for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+    function connectParticles() {
+        for (let a = 0; a < particles.length; a++) {
+            for (let b = a + 1; b < particles.length; b++) {
+                const dx = particles[a].x - particles[b].x;
+                const dy = particles[a].y - particles[b].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[a].x, particles[a].y);
+                    ctx.lineTo(particles[b].x, particles[b].y);
+                    ctx.strokeStyle = 'rgba(45,107,198,' + (1 - dist / 120) * 0.15 + ')';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => { p.update(); p.draw(); });
+        connectParticles();
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();
+
+// ===== FORM =====
+function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.btn-submit');
+    btn.textContent = 'Odesláno!';
+    btn.style.background = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Odeslat zprávu'; btn.style.background = ''; e.target.reset(); }, 2500);
+}
+</script>
+</body>
+</html>
